@@ -1,0 +1,45 @@
+autoload -Uz compinit
+for dump in "${ZDOTDIR:-$HOME}/.zshdump"(N.m-1); do
+  compinit -C
+done
+compinit -i
+
+source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
+antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
+
+export GOPATH="$HOME/go"
+path=(
+  $HOME/.antigravity/antigravity/bin
+  $HOME/.spicetify
+  $GOPATH/bin
+  $path
+)
+export PATH
+
+eval "$(fnm env --use-on-cd --shell zsh)"
+eval "$(zoxide init zsh --cmd cd)"
+eval "$(starship init zsh)"
+source <(fzf --zsh)
+
+export OPENAI_API_KEY="{{ onepasswordRead "op://Macbook/zshrc/OPENAI_API_KEY" }}"
+export GITHUB_PERSONAL_ACCESS_TOKEN="{{ onepasswordRead "op://Macbook/zshrc/GITHUB_PERSONAL_ACCESS_TOKEN" }}"
+
+# Eza (moderl ls)
+alias ls='eza -lh --group-directories-first --icons --hyperlink'
+alias lsa='ls -a'
+alias lt='eza --tree --level=2 --long --icons --git'
+alias lta='lt -a'
+
+# Claude Code
+alias c='claude'
+alias c-refactor="claude -p 'Review the TypeScript patterns in this folder and suggest improvements for type safety and readability.'"
+alias c-fix="tmux capture-pane -p -S -20 | claude -p 'Look at this terminal output and help me fix the error.'"
+alias c-conflict="claude -p 'I am currently in a merge conflict, look at the conflict and help me fix it.'"
+
+alias rsync='/opt/homebrew/bin/rsync'
+alias cp='cp -iv'
+alias mv='mv -iv'
+
+function take() {
+  mkdir -p "$1" && cd "$1"
+}
