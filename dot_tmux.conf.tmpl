@@ -1,11 +1,13 @@
 # --- General Settings ---
 set -g default-terminal "tmux-256color"
 set -ag terminal-overrides ",xterm-256color:RGB"
+set -g prefix C-b
+bind C-b send-prefix
 
 # Fix Escape key delay for Vim/Neovim
 set -s escape-time 0
 
-# Start windows and panes at 1, not 0 (better for keyboard reach)
+# Start windows and panes at 1, not 0
 set -g base-index 1
 setw -g pane-base-index 1
 set-option -g renumber-windows on
@@ -13,10 +15,11 @@ set-option -g renumber-windows on
 # Enable mouse support
 set -g mouse on
 
+# Reload binding (Replacement for autoreload)
+bind r source-file ~/.tmux.conf \; display-message "Config reloaded!"
+
 # --- 1Password SSH Agent Support ---
-# This ensures that when you re-attach to a session, tmux finds the 1Password socket
 set-option -g update-environment "DISPLAY SSH_ASKPASS SSH_AUTH_SOCK SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY"
-# Hardcoded path for macOS stability
 setenv -g SSH_AUTH_SOCK "/Users/{{ .chezmoi.username }}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 
 # --- Plugins ---
@@ -25,17 +28,14 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'sainnhe/tmux-fzf'
 set -g @plugin 'jaclu/tmux-menus'
 set -g @plugin 'catppuccin/tmux#v2.1.3'
-set -g @plugin 'b0o/tmux-autoreload'
 
 # --- Plugin Config ---
 set -g @menus_trigger 'Space'
 set -g @catppuccin_flavor 'macchiato'
 
 # --- Terminal Features ---
-# Support undercurls and other modern terminal features
 set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
 set -as terminal-overrides ',*:Setut=\E[4:3:%p1%dm'
 
 # --- Initialize TPM ---
-# Keep this line at the very bottom
 run '~/.tmux/plugins/tpm/tpm'
