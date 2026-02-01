@@ -1,0 +1,10 @@
+# --- PUBLIC SETTINGS (Safe for GitHub) ---
+Include ~/.orbstack/ssh/config
+
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  ServerAliveInterval 30
+  IdentitiesOnly yes
+
+# --- PRIVATE SETTINGS (Pulled from 1Password) ---
+{{ onepasswordRead "op://Macbook/ssh_config/notesPlain" }}
