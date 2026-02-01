@@ -1,0 +1,10 @@
+[user]
+	name = Justin Nel
+	email = {{ onepasswordRead "op://Macbook/gitconfig/email" }}
+	signingkey = {{ onepasswordRead "op://Macbook/gitconfig/signingkey" }}
+[commit]
+	gpgSign = true
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
