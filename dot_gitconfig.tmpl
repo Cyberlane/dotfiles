@@ -1,10 +1,18 @@
 [user]
 	name = Justin Nel
-	email = {{ onepasswordRead "op://Macbook/gitconfig/email" }}
+	email = {{ .email | default (onepasswordRead "op://Macbook/gitconfig/email") | quote }}
 	signingkey = {{ onepasswordRead "op://Employee/GitHub SSH Key/public key" }}
-[commit]
-	gpgSign = true
+[init]
+	defaultBranch = {{ .default_branch | default "main" | quote }}
+[rerere]
+	enabled = true
+[push]
+	default = current
+[pull]
+	rebase = true
 [gpg]
 	format = ssh
 [gpg "ssh"]
 	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+[commit]
+	gpgSign = true
