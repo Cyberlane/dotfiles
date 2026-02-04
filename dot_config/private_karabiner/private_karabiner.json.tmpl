@@ -38,7 +38,7 @@
                 }
             ],
             "virtual_hid_keyboard": { 
-                "keyboard_type_v2": {{ .keyboard_type | default "iso" | quote }} 
+                "keyboard_type_v2": {{ (index . "keyboard_type") | default "iso" | quote }}
             }
         }
     ]

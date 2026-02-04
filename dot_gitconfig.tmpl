@@ -1,9 +1,9 @@
 [user]
 	name = Justin Nel
-	email = {{ .email | default (onepasswordRead "op://Macbook/gitconfig/email") | quote }}
+  email = {{ (index . "email") | default (onepasswordRead "op://Macbook/gitconfig/email") | quote }}
 	signingkey = {{ onepasswordRead "op://Employee/GitHub SSH Key/public key" }}
 [init]
-	defaultBranch = {{ .default_branch | default "main" | quote }}
+  defaultBranch = {{ (index . "default_branch") | default "main" | quote }}
 [rerere]
 	enabled = true
 [push]
