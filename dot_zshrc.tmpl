@@ -24,6 +24,7 @@ source <(fzf --zsh)
 export OPENAI_API_KEY="{{ onepasswordRead "op://Macbook/zshrc/OPENAI_API_KEY" }}"
 export GITHUB_PERSONAL_ACCESS_TOKEN="{{ onepasswordRead "op://Macbook/zshrc/GITHUB_PERSONAL_ACCESS_TOKEN" }}"
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
+export PAGER="bat"
 
 # Eza (moderl ls)
 alias ls='eza -lh --group-directories-first --icons --hyperlink'
@@ -41,6 +42,7 @@ alias rsync='/opt/homebrew/bin/rsync'
 alias cat='/opt/homebrew/bin/bat'
 alias cp='cp -iv'
 alias mv='mv -iv'
+alias less='bat --paging=always'
 
 function take() {
   mkdir -p "$1" && cd "$1"
