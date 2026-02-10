@@ -2,17 +2,49 @@
 	name = Justin Nel
   email = {{ (index . "email") | default (onepasswordRead "op://Macbook/gitconfig/email") | quote }}
 	signingkey = {{ onepasswordRead "op://Employee/GitHub SSH Key/public key" }}
+
 [init]
   defaultBranch = {{ (index . "default_branch") | default "main" | quote }}
+
+[include]
+  path = ~/.config/delta/themes.gitconfig
+
+[core]
+  pager = delta
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+  features = decorations
+  navigate = true
+  light = false
+  side-by-side = true
+  line-numbers = true
+  syntax-theme = Monokai Extended
+  plus-style = "syntax #012800"
+  minus-style = "syntax #340001"
+
+[diff]
+  colorMoved = default
+
+[merge]
+  conflictstyle = zdiff3
+
 [rerere]
 	enabled = true
+
 [push]
 	default = current
+
 [pull]
 	rebase = true
+
 [gpg]
 	format = ssh
+
 [gpg "ssh"]
 	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
 [commit]
 	gpgSign = true
