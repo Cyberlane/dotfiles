@@ -1,7 +1,7 @@
 [user]
-	name = Justin Nel
+  name = Justin Nel
   email = {{ (index . "email") | default (onepasswordRead "op://Macbook/gitconfig/email") | quote }}
-	signingkey = {{ onepasswordRead "op://Employee/GitHub SSH Key/public key" }}
+  signingkey = {{ onepasswordRead "op://Private/GitHub SSH Key/public key" }}
 
 [init]
   defaultBranch = {{ (index . "default_branch") | default "main" | quote }}
@@ -32,19 +32,19 @@
   conflictstyle = zdiff3
 
 [rerere]
-	enabled = true
+  enabled = true
 
 [push]
-	default = current
+  default = current
 
 [pull]
-	rebase = true
+  rebase = true
 
 [gpg]
-	format = ssh
+  format = ssh
 
 [gpg "ssh"]
-	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 
 [commit]
-	gpgSign = true
+  gpgSign = true
