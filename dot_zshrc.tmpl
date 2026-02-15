@@ -27,12 +27,15 @@ export GITHUB_PERSONAL_ACCESS_TOKEN="{{ onepasswordRead "op://Macbook/zshrc/GITH
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 export PAGER="bat"
 export LESS="-RF"
+export OLLAMA_API_BASE=http://127.0.0.1:11434
+export EDITOR='vim'
 
 # Eza (moderl ls)
 alias ls='eza -lh --group-directories-first --icons --hyperlink'
 alias lsa='ls -a'
 alias lt='eza --tree --level=2 --long --icons --git'
 alias lta='lt -a'
+alias godot="/Applications/Godot.app/Contents/MacOS/Godot"
 
 # Claude Code
 alias c='claude'
