@@ -1,0 +1,17 @@
+services:
+  9router:
+    image: ghcr.io/decolua/9router:latest
+    container_name: 9router
+    ports:
+      - "20128:20128"
+    volumes:
+      # Maps the hidden folder on your Mac to ensure settings survive restarts
+      - ~/.9router:/app/data
+    environment:
+      - DATA_DIR=/app/data
+      - PORT=20128
+    restart: unless-stopped
+{{- if eq .chezmoi.os "darwin" }}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+{{- end }}
