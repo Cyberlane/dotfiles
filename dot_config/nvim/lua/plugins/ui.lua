@@ -146,16 +146,14 @@ return {
     opts = {
       plugins = { spelling = true },
       spec = {
-        { "<leader>b", group = "buffer" },
+        { "<leader>b", group = "buffers" },
         { "<leader>c", group = "code" },
         { "<leader>d", group = "debug" },
-        { "<leader>f", group = "file/find" },
+        { "<leader>f", group = "find/search" },
         { "<leader>g", group = "git" },
-        { "<leader>h", group = "hunks" },
-        { "<leader>n", group = "npm" },
-        { "<leader>q", group = "quit" },
-        { "<leader>s", group = "search/symbols" },
-        { "<leader>x", group = "trouble" },
+        { "<leader>q", group = "quit/session" },
+        { "<leader>t", group = "tasks/terminal" },
+        { "<leader>x", group = "diagnostics/lists" },
         { "[", group = "prev" },
         { "]", group = "next" },
         { "g", group = "goto" },
@@ -264,11 +262,11 @@ return {
     "rcarriga/nvim-notify",
     keys = {
       {
-        "<leader>un",
+        "<leader>tn",
         function()
           require("notify").dismiss({ silent = true, pending = true })
         end,
-        desc = "Dismiss all Notifications",
+        desc = "Dismiss Notifications",
       },
     },
     opts = {

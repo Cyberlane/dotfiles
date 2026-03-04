@@ -102,7 +102,7 @@ return {
         nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
         nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
         nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-        nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
+        nmap("<leader>ct", vim.lsp.buf.type_definition, "[C]ode [T]ype Definition")
         nmap("<leader>cs", require("telescope.builtin").lsp_document_symbols, "[C]ode [S]ymbols")
         nmap("<leader>cw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[C]ode [W]orkspace Symbols")
 

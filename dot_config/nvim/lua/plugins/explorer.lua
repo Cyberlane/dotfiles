@@ -3,8 +3,8 @@ return {
     "nvim-tree/nvim-tree.lua",
     cmd = { "NvimTreeToggle", "NvimTreeFocus", "NvimTreeFindFile" },
     keys = {
-      { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Toggle Explorer" },
-      { "<leader>o", "<cmd>NvimTreeFindFile<cr>", desc = "Focus Current File in Explorer" },
+      { "<leader>fe", "<cmd>NvimTreeToggle<cr>", desc = "File Explorer" },
+      { "<leader>fE", "<cmd>NvimTreeFindFile<cr>", desc = "Reveal File in Explorer" },
     },
     opts = {
       disable_netrw = true,

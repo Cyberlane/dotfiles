@@ -10,24 +10,41 @@ return {
       },
     },
     keys = {
-      { "<leader>,", "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "Switch Buffer" },
-      { "<leader>/", "<cmd>Telescope live_grep<cr>", desc = "Find in Files (Grep)" },
+      { "<leader>bb", "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "Show Buffers" },
+      { "<leader>fg", function() require("config.utils").live_grep_scope() end, desc = "Search in Scope" },
       {
         "<leader>ff",
         function()
-          require("telescope.builtin").find_files({ hidden = true })
+          require("config.utils").smart_find_files()
         end,
         desc = "Find Files",
       },
-      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
-      { "<leader>fb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Buffer" },
-      { "<leader>nr", function() require("config.utils").npm_scripts() end, desc = "Npm Run" },
-      { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "commits" },
-      { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "status" },
-      { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help Pages" },
-      { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Key Maps" },
-      { "<leader>sw", "<cmd>Telescope grep_string<cr>", desc = "Word under cursor" },
-      { "<leader>sR", "<cmd>Telescope resume<cr>", desc = "Resume" },
+      { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Find Recent Files" },
+      { "<leader>fp", "<cmd>Telescope commands<cr>", desc = "Show Command Palette" },
+      { "<leader>f;", "<cmd>Telescope command_history<cr>", desc = "Show Command History" },
+      { "<leader>fw", "<cmd>Telescope grep_string<cr>", desc = "Search Word Under Cursor" },
+      { "<leader>fo", function() require("config.utils").live_grep_open_files() end, desc = "Search in Open Files" },
+      { "<leader>fc", function() require("config.utils").live_grep_scope() end, desc = "Search in Current Scope" },
+      { "<leader>fR", "<cmd>Telescope resume<cr>", desc = "Resume Last Search" },
+      { "<leader>fT", function() require("config.utils").toggle_picker_scope() end, desc = "Toggle Search Scope" },
+      { "<leader>fs", function() require("config.utils").workspace_symbols_prompt() end, desc = "Search Workspace Symbols" },
+      { "<leader>fS", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Search Document Symbols" },
+      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Search Help Tags" },
+      { "<leader>fk", "<cmd>Telescope keymaps<cr>", desc = "Search Keymaps" },
+      { "<leader>bf", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Find in Buffer" },
+      { "<leader>tr", function() require("config.utils").npm_scripts() end, desc = "Run NPM Task" },
+      { "<leader>tl", function() require("config.utils").rerun_last_task() end, desc = "Rerun Last Task" },
+      { "<leader>tt", function() require("config.utils").toggle_task_terminal() end, desc = "Toggle Task Terminal" },
+      { "<leader>tf", function() require("config.utils").focus_task_terminal() end, desc = "Focus Task Terminal" },
+      { "<leader>ts", function() require("config.utils").stop_task() end, desc = "Stop Running Task" },
+      { "<leader>tc", function() require("config.utils").clear_task_terminal() end, desc = "Clear Task Terminal" },
+      { "<leader>th", function() require("config.utils").task_history_picker() end, desc = "Show Task History" },
+      { "<leader>ta", function() require("config.utils").toggle_task_autoclose() end, desc = "Toggle Task Auto Close" },
+      { "<leader>xg", function() require("config.utils").live_grep_to_quickfix() end, desc = "Search and Fill Quickfix" },
+      { "<leader>xw", function() require("config.utils").grep_word_to_quickfix() end, desc = "Search Word and Fill Quickfix" },
+      { "<leader>xo", function() require("config.utils").find_files_to_quickfix() end, desc = "Find Files and Fill Quickfix" },
+      { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Show Git Commits" },
+      { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Show Git Status" },
     },
     opts = function()
       local actions = require("telescope.actions")
@@ -186,17 +203,17 @@ return {
 
         map("n", "]h", gs.next_hunk, "Next Hunk")
         map("n", "[h", gs.prev_hunk, "Prev Hunk")
-        map("n", "<leader>hs", gs.stage_hunk, "Stage Hunk")
-        map("n", "<leader>hr", gs.reset_hunk, "Reset Hunk")
-        map("v", "<leader>hs", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Stage Hunk")
-        map("v", "<leader>hr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Reset Hunk")
-        map("n", "<leader>hS", gs.stage_buffer, "Stage Buffer")
-        map("n", "<leader>hu", gs.undo_stage_hunk, "Undo Stage Hunk")
-        map("n", "<leader>hR", gs.reset_buffer, "Reset Buffer")
-        map("n", "<leader>hp", gs.preview_hunk, "Preview Hunk")
-        map("n", "<leader>hb", function() gs.blame_line({ full = true }) end, "Blame Line")
-        map("n", "<leader>hd", gs.diffthis, "Diff This")
-        map("n", "<leader>hD", function() gs.diffthis("~") end, "Diff This ~")
+        map("n", "<leader>ga", gs.stage_hunk, "Git Stage Hunk")
+        map("n", "<leader>gr", gs.reset_hunk, "Git Reset Hunk")
+        map("v", "<leader>ga", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git Stage Hunk")
+        map("v", "<leader>gr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Git Reset Hunk")
+        map("n", "<leader>gA", gs.stage_buffer, "Git Stage Buffer")
+        map("n", "<leader>gu", gs.undo_stage_hunk, "Git Undo Stage Hunk")
+        map("n", "<leader>gR", gs.reset_buffer, "Git Reset Buffer")
+        map("n", "<leader>gp", gs.preview_hunk, "Git Preview Hunk")
+        map("n", "<leader>gb", function() gs.blame_line({ full = true }) end, "Git Blame Line")
+        map("n", "<leader>gD", gs.diffthis, "Git Diff This")
+        map("n", "<leader>g~", function() gs.diffthis("~") end, "Git Diff Against ~")
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
     },
@@ -284,12 +301,12 @@ return {
       },
     },
     keys = {
-      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
-      { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
-      { "<leader>ss", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
-      { "<leader>sl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions / references / ... (Trouble)" },
-      { "<leader>xL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
-      { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
+      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Show Project Diagnostics" },
+      { "<leader>xb", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Show Buffer Diagnostics" },
+      { "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Show Symbols List" },
+      { "<leader>xi", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "Show LSP Locations" },
+      { "<leader>xl", "<cmd>Trouble loclist toggle<cr>", desc = "Show Location List" },
+      { "<leader>xq", "<cmd>Trouble qflist toggle<cr>", desc = "Show Quickfix List" },
     },
   },
 
@@ -313,8 +330,8 @@ return {
     keys = {
       { "]t", function() require("todo-comments").jump_next() end, desc = "Next todo comment" },
       { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous todo comment" },
-      { "<leader>st", "<cmd>TodoTelescope<cr>", desc = "Todo" },
-      { "<leader>sT", "<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme" },
+      { "<leader>xt", "<cmd>TodoTelescope<cr>", desc = "Todo List" },
+      { "<leader>xT", "<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme" },
     },
   },
 
@@ -325,29 +342,29 @@ return {
     keys = function()
       local keys = {
         {
-          "<leader>a",
+          "<leader>ba",
           function()
             require("harpoon"):list():add()
           end,
-          desc = "Harpoon File",
+          desc = "Add Bookmark",
         },
         {
-          "<C-e>",
+          "<leader>bm",
           function()
             local harpoon = require("harpoon")
             harpoon.ui:toggle_quick_menu(harpoon:list())
           end,
-          desc = "Harpoon Quick Menu",
+          desc = "Bookmark Menu",
         },
       }
 
       for i = 1, 5 do
         table.insert(keys, {
-          "<leader>" .. i,
+          "<leader>b" .. i,
           function()
             require("harpoon"):list():select(i)
           end,
-          desc = "Harpoon to File " .. i,
+          desc = "Open Bookmark " .. i,
         })
       end
       return keys
@@ -357,7 +374,7 @@ return {
   {
     "mbbill/undotree",
     keys = {
-      { "<leader>u", "<cmd>UndotreeToggle<cr>", desc = "Undotree" },
+      { "<leader>tu", "<cmd>UndotreeToggle<cr>", desc = "Undo Tree" },
     },
   },
 
