@@ -19,8 +19,8 @@ eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd --shell zsh)"
 source <(fzf --zsh)
 
-export OPENAI_API_KEY="{{ .openai_api_key }}"
-export GITHUB_PERSONAL_ACCESS_TOKEN="{{ .github_token }}"
+export OPENAI_API_KEY="{{ output "op" "read" "op://Macbook/dotfiles_shell_secrets/openai_api_key" | trim }}"
+export GITHUB_PERSONAL_ACCESS_TOKEN="{{ output "op" "read" "op://Macbook/dotfiles_shell_secrets/github_personal_access_token" | trim }}"
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 export PAGER="bat"
 export LESS="-RF"
@@ -41,7 +41,7 @@ alias c-fix="tmux capture-pane -p -S -20 | claude -p 'Look at this terminal outp
 alias c-conflict="claude -p 'I am currently in a merge conflict, look at the conflict and help me fix it.'"
 
 # Xiaomi MiMo Configuration
-export MIMO_API_KEY="***REMOVED***"
+export MIMO_API_KEY="{{ output "op" "read" "op://Macbook/dotfiles_shell_secrets/mimo_api_key" | trim }}"
 export MIMO_BASE_URL="https://api.xiaomimimo.com/v1"
 
 alias rsync='/opt/homebrew/bin/rsync'
