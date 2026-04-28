@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+config_dir="{{ .chezmoi.homeDir }}/.config/9router"
+
+if [ -e "$config_dir" ] || [ -L "$config_dir" ]; then
+  rm -rf -- "$config_dir"
+fi
