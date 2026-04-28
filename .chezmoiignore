@@ -2,6 +2,7 @@ README.md
 LICENSE
 .git
 .gitignore
-.claude
+.claude/*
+!.claude/settings.json
 setup.sh
 lazyvim.json

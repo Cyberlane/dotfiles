@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PATH="{{ .chezmoi.homeDir }}/.local/bin:{{ .chezmoi.homeDir }}/.bun/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}"
+
+log() {
+  printf 'install-claude-tools: %s\n' "$*"
+}
+
+if ! command -v fnm >/dev/null 2>&1; then
+  echo "install-claude-tools: fnm is required but was not found; check the Homebrew bundle step" >&2
+  exit 1
+fi
+
+eval "$(fnm env --use-on-cd --shell bash)"
+
+if ! current_node="$(fnm current 2>/dev/null)" || [ -z "$current_node" ] || [ "$current_node" = "none" ] || ! command -v node >/dev/null 2>&1 || ! node --version >/dev/null 2>&1; then
+  log "installing Node LTS with fnm"
+  fnm install --lts --use
+  node_version="$(node --version | sed 's/^v//')"
+  fnm default "$node_version"
+  eval "$(fnm env --use-on-cd --shell bash)"
+fi
+
+if ! command -v npm >/dev/null 2>&1; then
+  echo "install-claude-tools: npm is required but was not found after Node setup" >&2
+  exit 1
+fi
+
+if ! command -v cavemem >/dev/null 2>&1; then
+  log "installing cavemem globally with npm"
+  npm install -g cavemem
+  hash -r
+fi
+
+if ! command -v claude >/dev/null 2>&1; then
+  echo "install-claude-tools: claude is required but was not found; check the Homebrew bundle step" >&2
+  exit 1
+fi
+
+if ! claude plugin marketplace list 2>/dev/null | grep -Fq 'JuliusBrussee/caveman'; then
+  log "adding caveman Claude plugin marketplace"
+  claude plugin marketplace add --scope user JuliusBrussee/caveman
+fi
+
+plugin_listing="$(claude plugin list 2>/dev/null || true)"
+
+if ! printf '%s\n' "$plugin_listing" | grep -Fq 'caveman@caveman'; then
+  log "installing caveman Claude plugin"
+  claude plugin install --scope user caveman@caveman
+  plugin_listing="$(claude plugin list 2>/dev/null || true)"
+fi
+
+if printf '%s\n' "$plugin_listing" | grep -F -A 5 'caveman@caveman' | grep -Fq 'disabled'; then
+  log "enabling caveman Claude plugin"
+  claude plugin enable --scope user caveman@caveman
+fi

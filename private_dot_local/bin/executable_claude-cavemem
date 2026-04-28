@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PATH="$HOME/.local/bin:$HOME/.bun/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}"
+
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd --shell bash)"
+fi
+
+if ! command -v cavemem >/dev/null 2>&1; then
+  echo "claude-cavemem: cavemem is not available; run chezmoi apply to install it" >&2
+  exit 127
+fi
+
+exec cavemem "$@"
