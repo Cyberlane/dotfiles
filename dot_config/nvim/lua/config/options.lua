@@ -50,9 +50,14 @@ opt.shortmess:append("c")
 opt.shortmess:append("C")
 opt.shortmess:append("I")
 
-opt.fillchars:append({
+opt.fillchars = {
+  foldopen = "",
+  foldclose = "",
+  fold = " ",
+  foldsep = " ",
+  diff = "╱",
   eob = " ",
-})
+}
 
 opt.list = true
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }

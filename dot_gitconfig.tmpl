@@ -1,10 +1,10 @@
 [user]
   name = Justin Nel
-  email = {{ (index . "email") | default (onepasswordRead "op://Macbook/gitconfig/email") | quote }}
-  signingkey = {{ onepasswordRead "op://Private/GitHub SSH Key/public key" }}
+  email = "justin@cyber-lane.com"
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqv6ou/mkNMU324TLjuIH0sCmh78QGcGcgD1lojSnm7
 
 [init]
-  defaultBranch = {{ (index . "default_branch") | default "main" | quote }}
+  defaultBranch = "main"
 
 [include]
   path = ~/.config/delta/themes.gitconfig
@@ -48,3 +48,9 @@
 
 [commit]
   gpgSign = true
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

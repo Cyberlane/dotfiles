@@ -1,3 +1,4 @@
+-- Debug Adapter Protocol
 return {
   {
     "mfussenegger/nvim-dap",
@@ -5,23 +6,6 @@ return {
       {
         "rcarriga/nvim-dap-ui",
         dependencies = { "nvim-neotest/nvim-nio" },
-        keys = {
-          {
-            "<leader>du",
-            function()
-              require("dapui").toggle({})
-            end,
-            desc = "Dap UI",
-          },
-          {
-            "<leader>de",
-            function()
-              require("dapui").eval()
-            end,
-            desc = "Eval",
-            mode = { "n", "v" },
-          },
-        },
         opts = {},
         config = function(_, opts)
           local dap = require("dap")
@@ -44,7 +28,7 @@ return {
       },
       {
         "microsoft/vscode-js-debug",
-        build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out",
+        -- No build needed - pre-built binaries included in plugin
       },
       {
         "mxsdev/nvim-dap-vscode-js",
@@ -59,65 +43,36 @@ return {
           require("telescope").load_extension("dap")
         end,
       },
-    },
-    keys = {
+      -- Go: delve adapter
       {
-        "<leader>db",
-        function()
-          require("dap").toggle_breakpoint()
-        end,
-        desc = "Toggle Breakpoint",
+        "leoluz/nvim-dap-go",
+        ft = "go",
+        opts = {
+          dap_configurations = {
+            {
+              type = "go",
+              name = "Attach remote",
+              mode = "remote",
+              request = "attach",
+            },
+          },
+          delve = {
+            port = "${port}",
+            args = {},
+          },
+        },
       },
+      -- Python: debugpy adapter
       {
-        "<leader>dL",
-        function()
-          require("config.utils").breakpoint_picker()
+        "mfussenegger/nvim-dap-python",
+        ft = "python",
+        config = function()
+          local path = vim.fn.stdpath("data") .. "/mason/packages/debugpy"
+          require("dap-python").setup(path .. "/venv/bin/python")
         end,
-        desc = "List Breakpoints",
-      },
-      {
-        "<leader>dX",
-        function()
-          require("dap").clear_breakpoints()
-        end,
-        desc = "Clear All Breakpoints",
-      },
-      {
-        "<leader>dc",
-        function()
-          require("dap").continue()
-        end,
-        desc = "Continue",
-      },
-      {
-        "<F5>",
-        function()
-          require("dap").continue()
-        end,
-        desc = "Continue",
-      },
-      {
-        "<F10>",
-        function()
-          require("dap").step_over()
-        end,
-        desc = "Step Over",
-      },
-      {
-        "<F11>",
-        function()
-          require("dap").step_into()
-        end,
-        desc = "Step Into",
-      },
-      {
-        "<F12>",
-        function()
-          require("dap").step_out()
-        end,
-        desc = "Step Out",
       },
     },
+    event = "VeryLazy",
     config = function()
       local dap = require("dap")
       if not dap.adapters["pwa-node"] then
@@ -156,6 +111,30 @@ return {
           },
         }
       end
+
+      -- C#: netcoredbg adapter
+      local netcoredbg_path = vim.fn.stdpath("data") .. "/mason/packages/netcoredbg"
+      dap.adapters.coreclr = {
+        type = "executable",
+        command = netcoredbg_path .. "/netcoredbg",
+        args = { "--interpreter=vscode" },
+      }
+      dap.configurations.cs = {
+        {
+          type = "coreclr",
+          name = "Launch",
+          request = "launch",
+          program = function()
+            return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/bin/Debug/", "file")
+          end,
+        },
+        {
+          type = "coreclr",
+          name = "Attach",
+          request = "attach",
+          processId = require("dap.utils").pick_process,
+        },
+      }
     end,
   },
 }

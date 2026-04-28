@@ -1,1 +1,7 @@
 README.md
+LICENSE
+.git
+.gitignore
+.claude
+setup.sh
+lazyvim.json

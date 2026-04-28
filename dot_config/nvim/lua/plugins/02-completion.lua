@@ -1,3 +1,4 @@
+-- Completion: nvim-cmp
 return {
   {
     "hrsh7th/nvim-cmp",
@@ -63,6 +64,7 @@ return {
           { name = "luasnip" },
           { name = "buffer" },
           { name = "path" },
+          { name = "vim-dadbod-completion" },
         }),
         formatting = {
           format = function(_, item)
