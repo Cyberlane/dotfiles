@@ -5,6 +5,7 @@ export PATH="$HOME/.local/bin:$HOME/.bun/bin:/opt/homebrew/bin:/usr/local/bin:/u
 
 if command -v fnm >/dev/null 2>&1; then
   eval "$(fnm env --use-on-cd --shell bash)"
+  fnm use default --silent-if-unchanged 2>/dev/null || true
 fi
 
 if ! command -v cavemem >/dev/null 2>&1; then

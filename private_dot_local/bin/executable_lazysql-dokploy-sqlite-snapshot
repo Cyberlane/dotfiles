@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "usage: lazysql-dokploy-sqlite-snapshot --host HOST --remote-path PATH --local-path PATH" >&2
+}
+
+host=""
+remote_path=""
+local_path=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --host)
+      host="${2:-}"
+      shift 2
+      ;;
+    --remote-path)
+      remote_path="${2:-}"
+      shift 2
+      ;;
+    --local-path)
+      local_path="${2:-}"
+      shift 2
+      ;;
+    *)
+      usage
+      exit 2
+      ;;
+  esac
+done
+
+if [[ -z "${host}" || -z "${remote_path}" || -z "${local_path}" ]]; then
+  usage
+  exit 2
+fi
+
+mkdir -p "$(dirname "${local_path}")"
+remote_tmp="/tmp/lazysql-sqlite-snapshot-${RANDOM}-${RANDOM}.sqlite"
+
+cleanup() {
+  ssh -o BatchMode=yes "${host}" "rm -f '${remote_tmp}'" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+ssh -o BatchMode=yes "${host}" \
+  "rm -f '${remote_tmp}' && sqlite3 '${remote_path}' '.backup ${remote_tmp}' && chmod 600 '${remote_tmp}'"
+scp -q "${host}:${remote_tmp}" "${local_path}"
+chmod 600 "${local_path}"

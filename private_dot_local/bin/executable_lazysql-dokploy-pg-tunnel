@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+import argparse
+import contextlib
+import os
+import signal
+import shlex
+import socket
+import subprocess
+import sys
+import threading
+
+
+def quote(value):
+    return shlex.quote(str(value))
+
+
+def copy_socket_to_pipe(source, target, stop_event):
+    try:
+        while not stop_event.is_set():
+            data = source.recv(65536)
+            if not data:
+                break
+            target.write(data)
+            target.flush()
+    except (BrokenPipeError, ConnectionResetError, OSError):
+        pass
+    finally:
+        with contextlib.suppress(OSError):
+            target.close()
+
+
+def copy_pipe_to_socket(source, target, stop_event):
+    source_fd = source.fileno()
+    try:
+        while not stop_event.is_set():
+            data = os.read(source_fd, 65536)
+            if not data:
+                break
+            target.sendall(data)
+    except (BrokenPipeError, ConnectionResetError, OSError):
+        pass
+    finally:
+        with contextlib.suppress(OSError):
+            target.shutdown(socket.SHUT_WR)
+
+
+def collect_stderr(source, chunks):
+    try:
+        while True:
+            data = source.read(4096)
+            if not data:
+                break
+            chunks.append(data)
+    except OSError:
+        pass
+
+
+def run_daemon(args, server):
+    stop_event = threading.Event()
+
+    def shutdown(*_):
+        stop_event.set()
+
+    server.settimeout(0.5)
+    signal.signal(signal.SIGTERM, shutdown)
+    signal.signal(signal.SIGINT, shutdown)
+
+    remote_command = (
+        "exec docker run --rm -i "
+        f"--network {quote(args.network)} "
+        "alpine/socat STDIO "
+        f"TCP:{quote(args.service)}:{quote(args.service_port)}"
+    )
+
+    try:
+        while not stop_event.is_set():
+            try:
+                client, _ = server.accept()
+            except socket.timeout:
+                continue
+            except OSError:
+                break
+
+            def handle_connection(client_sock):
+                proc = None
+                stderr_chunks = []
+                try:
+                    proc = subprocess.Popen(
+                        [
+                            "ssh",
+                            "-T",
+                            "-o",
+                            "BatchMode=yes",
+                            "-o",
+                            "ServerAliveInterval=30",
+                            args.host,
+                            remote_command,
+                        ],
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                    )
+                    stderr_thread = threading.Thread(
+                        target=collect_stderr,
+                        args=(proc.stderr, stderr_chunks),
+                        daemon=True,
+                    )
+                    upload_thread = threading.Thread(
+                        target=copy_socket_to_pipe,
+                        args=(client_sock, proc.stdin, stop_event),
+                        daemon=True,
+                    )
+                    download_thread = threading.Thread(
+                        target=copy_pipe_to_socket,
+                        args=(proc.stdout, client_sock, stop_event),
+                        daemon=True,
+                    )
+                    stderr_thread.start()
+                    upload_thread.start()
+                    download_thread.start()
+                    upload_thread.join()
+                    download_thread.join()
+                finally:
+                    if proc and proc.poll() is None:
+                        proc.terminate()
+                        try:
+                            proc.wait(timeout=3)
+                        except subprocess.TimeoutExpired:
+                            proc.kill()
+                            proc.wait()
+                    if proc and proc.returncode not in (0, None) and stderr_chunks:
+                        sys.stderr.buffer.write(b"".join(stderr_chunks)[-4096:])
+                        sys.stderr.buffer.flush()
+                    client_sock.close()
+
+            threading.Thread(target=handle_connection, args=(client,), daemon=True).start()
+    finally:
+        with contextlib.suppress(OSError):
+            server.close()
+        stop_event.set()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Expose a Dokploy Postgres service on a local TCP port for LazySQL.")
+    parser.add_argument("--host", required=True)
+    parser.add_argument("--service", required=True)
+    parser.add_argument("--listen-port", required=True, type=int)
+    parser.add_argument("--service-port", default=5432, type=int)
+    parser.add_argument("--network", default="dokploy-network")
+    args = parser.parse_args()
+
+    # Bind the listening socket, then fork a detached daemon to keep it alive.
+    # The parent exits immediately so lazysql's 5-second command timeout isn't hit.
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind(("127.0.0.1", args.listen_port))
+    server.listen(32)
+
+    pid = os.fork()
+    if pid > 0:
+        # Parent: close our copy of the socket and hard-exit immediately.
+        # os._exit avoids atexit/GC hooks that might close inherited FDs.
+        server.close()
+        os._exit(0)
+
+    # Child (daemon): detach from the parent session, close inherited FDs
+    # so the parent's Popen.communicate() doesn't block waiting for EOF.
+    os.setsid()
+    devnull = os.open(os.devnull, os.O_RDWR)
+    os.dup2(devnull, 0)
+    os.dup2(devnull, 1)
+    os.dup2(devnull, 2)
+    os.close(devnull)
+    run_daemon(args, server)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:
+        print(f"lazysql-dokploy-pg-tunnel: {exc}", file=sys.stderr)
+        sys.exit(1)

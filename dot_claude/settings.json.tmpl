@@ -7,7 +7,7 @@
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "claude-hud@claude-hud": true,
-    "swift-lsp@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": false,
     "obsidian@obsidian-skills": true,
     "gopls-lsp@claude-plugins-official": true,
     "caveman@caveman": true
@@ -51,26 +51,6 @@
           {
             "type": "command",
             "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem hook run session-start --ide claude-code"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem hook run user-prompt-submit --ide claude-code"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem hook run post-tool-use --ide claude-code"
           }
         ]
       }

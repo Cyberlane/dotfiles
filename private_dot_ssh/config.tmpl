@@ -7,4 +7,4 @@ Host *
   IdentitiesOnly yes
 
 # --- PRIVATE SETTINGS (Pulled from 1Password) ---
-{{ onepasswordRead "op://Macbook/ssh_config/notesPlain" }}
+{{ output "op" "read" "op://Macbook/ssh_config/notesPlain" | trim }}
