@@ -1,0 +1,7 @@
+# OhMyOpenCode / OpenCode
+.sisyphus/
+docs/superpowers/
+
+# Claude / Agent artifacts
+.claude/
+memory/

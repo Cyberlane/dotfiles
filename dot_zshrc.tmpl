@@ -21,8 +21,8 @@ source <(fzf --zsh)
 
 export OPENAI_API_KEY="{{ output "op" "read" "op://Macbook/dotfiles_shell_secrets/openai_api_key" | trim }}"
 export GITHUB_PERSONAL_ACCESS_TOKEN="{{ output "op" "read" "op://Macbook/dotfiles_shell_secrets/github_personal_access_token" | trim }}"
-# 1Password service account token — broad scope (git SSH, servers, other vault secrets)
-export OP_SERVICE_ACCOUNT_TOKEN="{{ output "op" "read" "op://Dokploy/cfd3equ3nk4tf6xj3m5dyc64x4/credential" | trim }}"
+# 1Password service account token — full access (read/write, git SSH, servers, vault secrets)
+export OP_SERVICE_ACCOUNT_TOKEN="{{ output "op" "read" "op://Macbook/4xi3wnzldlhvrx55pxwxrz64da/credential" | trim }}"
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 export PAGER="bat"
 export LESS="-RF"
