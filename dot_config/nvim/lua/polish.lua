@@ -1,0 +1,2 @@
+-- This file runs after AstroNvim has loaded.
+-- Add one-off Vimscript or Lua customizations here when needed.
