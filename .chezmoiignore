@@ -3,6 +3,5 @@ LICENSE
 .git
 .gitignore
 .claude/*
-!.claude/settings.json
 setup.sh
 lazyvim.json
