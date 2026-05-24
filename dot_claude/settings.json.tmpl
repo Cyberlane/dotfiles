@@ -1,48 +1,6 @@
 {
-  "model": "sonnet",
-  "statusLine": {
-    "type": "command",
-    "command": "bash -c 'plugin_dir=$(find \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache/claude-hud/claude-hud\" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)/; exec \"{{ .chezmoi.homeDir }}/.local/bin/claude-plugin-node\" \"${plugin_dir}dist/index.js\"'"
-  },
-  "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
-    "claude-hud@claude-hud": true,
-    "swift-lsp@claude-plugins-official": false,
-    "obsidian@obsidian-skills": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "caveman@caveman": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-hud": {
-      "source": {
-        "source": "github",
-        "repo": "jarrodwatts/claude-hud"
-      }
-    },
-    "obsidian-skills": {
-      "source": {
-        "source": "github",
-        "repo": "kepano/obsidian-skills"
-      }
-    },
-    "thedotmack": {
-      "source": {
-        "source": "github",
-        "repo": "thedotmack/claude-mem"
-      }
-    },
-    "cloudflare": {
-      "source": {
-        "source": "github",
-        "repo": "cloudflare/skills"
-      }
-    },
-    "caveman": {
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
-    }
+  "permissions": {
+    "defaultMode": "auto"
   },
   "hooks": {
     "SessionStart": [
@@ -51,6 +9,26 @@
           {
             "type": "command",
             "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem hook run session-start --ide claude-code"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem hook run user-prompt-submit --ide claude-code"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem hook run post-tool-use --ide claude-code"
           }
         ]
       }
@@ -76,6 +54,38 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'plugin_dir=$(find \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache/claude-hud/claude-hud/\" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort -t. -k1,1n -k2,2n -k3,3n | tail -1); exec \"{{ .chezmoi.homeDir }}/.local/bin/claude-plugin-node\" \"${plugin_dir}/dist/index.js\"'"
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "claude-hud@claude-hud": true,
+    "figma@claude-plugins-official": true,
+    "caveman@caveman": true,
+    "claude-code-setup@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true,
   "mcpServers": {
     "cavemem": {
       "command": "{{ .chezmoi.homeDir }}/.local/bin/claude-cavemem",
